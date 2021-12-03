@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, redirect, request
 from flask.templating import render_template_string
-import requests, datetime, json, threading, time, pandas, os, sys
+import requests, datetime, json, threading, time, pandas, os
 from . import db
 from os.path import join, dirname, realpath
 from datetime import datetime
@@ -8,10 +8,14 @@ from werkzeug.utils import secure_filename
 
 UPLOADS_PATH = join(dirname(realpath(__file__)), 'files/')
 
+ad = -1
+
+pgs = []
 
 class Notee(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
+    status = db.Column(db.String(100))
     url = db.Column(db.String(1000))
     proxies_am = db.Column(db.Integer, default = 0)
     threads = db.Column(db.Integer, default = 0)
@@ -36,6 +40,8 @@ views = Blueprint('views',__name__)
 
 @views.route('/', methods = ['POST','GET'])
 def home():
+    global ad
+    global pds
     if request.method == 'POST':
         if request.form['form-name'] == 'form1':
             tsk_name = request.form['name']
@@ -62,7 +68,7 @@ def home():
 
             if int(tsk_proxy)>len(proxies):
                 tsk_proxy=len(proxies)
-            ns = Notee(name = tsk_name, proxies_am = tsk_proxy, threads = tsk_threads, wait = tsk_wait, amount = tsk_amount, url=tsk_url)
+            ns = Notee(name = tsk_name, proxies_am = tsk_proxy, threads = tsk_threads, wait = tsk_wait, amount = tsk_amount, url=tsk_url, status='In progress')
             
 
 
@@ -75,10 +81,9 @@ def home():
 
 
 
-            while len(proxies)<len(emails):
-                proxies*=3
 
-            
+            ad+=1
+            pgs.append('In progress')
             for i in range(tsk_threads):
                 t = threading.Thread(target=roc, args=(emails, names, proxies, tsk_url, i, tsk_threads, tsk_wait))
                 t.start()
@@ -106,6 +111,7 @@ def home():
                 return redirect('/')
             except:
                 return('meh error')
+                
 
 
     else:
@@ -330,9 +336,13 @@ def pxies():
 
 
 def roc(emails, names, proxies,url,j,threads, wait):
+    global pgs
+    global ad
     for i in range(round(len(emails)/threads*(j-1)), round(len(emails)/threads*j)):
-        req(email=emails[i],name=names[i],proxy=proxies[i],url=url,typee=None)
+        req(email=emails[i],name=names[i],proxy=None,url=url,typee=None)
         time.sleep(wait)
+    pgs[ad]='Done'
+    
 
 
 

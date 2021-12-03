@@ -1,11 +1,12 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from os import path
+import os.path, sys
 
 db = SQLAlchemy()
 DB_NAME = 'database.db'
 
-UPLOAD_FOLDER = './files'
+UPLOAD_FOLDER = os.path.join(sys.path[0],'files')
 ALLOWED_EXTENSIONS = {'txt', 'xslx'}
 
 
