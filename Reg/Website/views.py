@@ -1,4 +1,5 @@
 from flask import Blueprint, render_template, redirect, request
+from flask.templating import render_template_string
 import requests, datetime, json, threading, time, pandas, os, sys
 from . import db
 from os.path import join, dirname, realpath
@@ -110,7 +111,190 @@ def home():
     else:
         tsks = Notee.query.order_by(Notee.date).all()
         pxs = Proxyy.query.order_by(Proxyy.adress).all()
-        return render_template('/home/admin/web/sendinggee.club/public_html/BotSer/Reg/Website/Template/index.html', tsks = tsks, pxs=pxs)
+        return render_template_string('''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+        
+            <div id='inputs'>
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <h1 style='color:white; font-size: 40px;'>ЗАДАНИЯ</h1>
+            <input autocomplete="off" type="hidden" name="form-name" id='form-name' value="form1">
+            <input autocomplete="off" placeholder="NAME" type="" name="name" id='name'>
+            <input autocomplete="off" placeholder="url" type="" name="url" id='url'>
+            <input autocomplete="off" placeholder="threads" type="" name="threads" id='threads'>
+            <input autocomplete="off"  placeholder="proxy" type="" name="proxy" id='proxy'>
+            <input autocomplete="off" placeholder="wait" type="" name="wait" id='wait'>
+            <input autocomplete="off" placeholder="emails" type="file" name="emails" id='emails'>
+            <input id ='subm' type="submit" value="SUBMIT">
+        </form>
+
+
+        <form action="/" method="POST" enctype="multipart/form-data" id='proxies'>
+            <h1 style='color:white; font-size: 40px;'>ПРОКСИ</h1>
+            <input autocomplete="off" type="hidden" name="form-name" id='form-name' value="form2">
+            <input autocomplete="off" placeholder="adress" type="" name="adress" id='adress'>
+            <input autocomplete="off" placeholder="port" type="" name="port" id='port'>
+            <input autocomplete="off" placeholder="login" type="" name="login" id='login'>
+            <input autocomplete="off" placeholder="password" type="" name="pass" id='pass'>
+            <select name="type" id="type">
+                <option id='http/https' name='http/https' value="http/https">http/https</option>
+                <option id='socks5' name='socks5' value="socks5">socks5</option>
+            </select>
+            <input id ='subm' type="submit" value="SUBMIT">
+        </form>
+    </div>
+    <div id='tabless'>
+        
+        <table>
+            <tr>
+                <th>Название</th>
+                <th>Дата</th>
+                <th>Ссылка</th>
+                <th>Потоки</th>
+                <th>Прокси</th>
+                <th>Интервалы</th>
+                <th>Количество</th>
+            </tr>
+    
+            {% for tsk in tsks %}
+            <tr>
+                <th>{{tsk.name}}</th>
+                <th>{{tsk.date}}</th>
+                <th>{{tsk.url}}</th>
+                <th>{{tsk.threads}}</th>
+                <th>{{tsk.proxies_am}}</th>
+                <th>{{tsk.wait}}</th>
+                <th>{{tsk.amount}}</th>
+            </tr>
+            {% endfor %}
+        </table>
+
+        <table id = 'prx'>
+            <tr>
+                <th>Адресс</th>
+                <th>Порт</th>
+                <th>Логин</th>
+                <th>Пароль</th>
+                <th>Тип</th>
+
+            </tr>
+    
+            {% for tsk in pxs %}
+            <tr>
+                <th>{{tsk.adress}}</th>
+                <th>{{tsk.port}}</th>
+                <th>{{tsk.login}}</th>
+                <th>{{tsk.passe}}</th>
+                <th>{{tsk.typee}}</th>
+            </tr>
+            {% endfor %}
+        </table>
+
+    </div>
+
+
+
+</body>
+<style>
+
+body
+{
+    background-color: #4158D0;
+    background-color: linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
+    height: 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    font-family: 'Roboto', sans-serif;
+}
+
+
+th
+{
+    border: 1px solid;
+    padding: 8px;
+    color: #000000;
+    font-weight: 600;
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+table
+{
+    border-collapse: collapse;
+    margin-top: 20px;
+    margin-left: 5px;
+    color: #642B73;
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #642B73;  /* fallback for old browsers */
+    border: 2px solid -webkit-linear-gradient(to right, #C6426E, #642B73);  /* Chrome 10-25, Safari 5.1-6 */
+    border: 2px solid linear-gradient(to right, #C6426E, #642B73); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+}
+input, select
+{
+    display: block;
+    margin:5px;
+    margin-bottom: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    border: none;
+    font-size: 15px;
+    font-weight: 400;
+    color: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    height: 30px;
+    text-transform: uppercase;
+    padding-left: 5px;
+    cursor: pointer;
+}
+
+select
+{
+    width: 120px;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+#subm
+{
+    background: #DD5E89;  /* fallback for old browsers */
+    background: -webkit-linear-gradient(to right, #F7BB97, #DD5E89);  /* Chrome 10-25, Safari 5.1-6 */
+    background: linear-gradient(to right, #F7BB97, #DD5E89); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    border: none;
+    color: white;
+    font-size: 20px;
+    border-radius: 10px;
+    width: 150px;
+    height: 50px;
+    margin-bottom: 30px;
+
+}
+
+#inputs
+{
+    display: flex;
+}
+
+#proxies, #prx
+{
+    margin-left: auto; 
+    margin-right: 0;
+}
+
+#tabless
+{
+    display: flex;
+}
+
+
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: rgba(0, 0, 0, 0.5);
+  opacity: 1; /* Firefox */
+}
+</style>
+</html>''', tsks = tsks, pxs=pxs)
 
 
 @views.route('/', methods = ['POST'])
