@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, request
-import requests, datetime, json, threading, time, pandas, os
+import requests, datetime, json, threading, time, pandas, os, sys
 from . import db
 from os.path import join, dirname, realpath
 from datetime import datetime
@@ -110,7 +110,7 @@ def home():
     else:
         tsks = Notee.query.order_by(Notee.date).all()
         pxs = Proxyy.query.order_by(Proxyy.adress).all()
-        return render_template('./templates/index.html', tsks = tsks, pxs=pxs)
+        return render_template('/home/admin/web/sendinggee.club/public_html/BotSer/Reg/Website/Template/index.html', tsks = tsks, pxs=pxs)
 
 
 @views.route('/', methods = ['POST'])
