@@ -110,7 +110,7 @@ def home():
     else:
         tsks = Notee.query.order_by(Notee.date).all()
         pxs = Proxyy.query.order_by(Proxyy.adress).all()
-        return render_template('index.html', tsks = tsks, pxs=pxs)
+        return render_template('./templates/index.html', tsks = tsks, pxs=pxs)
 
 
 @views.route('/', methods = ['POST'])
